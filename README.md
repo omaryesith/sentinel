@@ -79,8 +79,8 @@ The project is fully dockerized to ensure a reproducible development environment
 2. **Configure environment variables:**
 
    ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
+   cp app/.env.example app/.env
+   # Edit app/.env with your configuration
    ```
 
 3. **Setup the entire project (recommended):**
@@ -211,6 +211,7 @@ sentinel/
 │   └── workflows/            # CI/CD workflows
 │       └── ci.yml            # Automated testing pipeline
 ├── app/                      # Django application
+│   ├── .env.example          # Environment variables template
 │   ├── core/                 # Project settings and configuration
 │   │   ├── settings.py       # Django settings
 │   │   ├── celery.py         # Celery configuration
@@ -232,7 +233,6 @@ sentinel/
 ├── docker-compose.yml        # Service orchestration
 ├── Makefile                  # Development shortcuts
 ├── pyproject.toml            # Python dependencies (Poetry)
-├── .env.example              # Environment variables template
 └── README.md                 # This file
 ```
 
@@ -240,7 +240,7 @@ sentinel/
 
 ## 🔧 Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+Create a `.env` file in the `app/` directory with the following variables:
 
 ```bash
 # Django Settings
