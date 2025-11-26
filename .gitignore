@@ -1,0 +1,22 @@
+#Python
+pycache/
+*.py[cod]
+*$py.class
+
+#Django
+*.log
+local_settings.py
+db.sqlite3
+media
+
+#Variables de entorno (CRÍTICO: NO SUBIR)
+.env
+
+#Docker
+.docker_data/
+
+#IDEs
+.idea/
+.vscode/
+*.swp
+*.swo

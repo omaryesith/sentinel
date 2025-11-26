@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "sentinel"
+version = "0.1.0"
+description = "Distributed Synthetic Monitoring System"
+authors = ["Omar Y. Alvarado <omarjesith@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^5.0"
+django-ninja = "^1.0"      # Fast and modern API
+gunicorn = "^21.2"         # Production WSGI server
+uvicorn = "^0.27.0"        # ASGI server (required for Async)
+psycopg = "^3.1"           # Modern Postgres driver
+celery = "^5.3"            # Task Queue
+redis = "^5.0"             # Broker for Celery
+httpx = "^0.27"            # Asynchronous HTTP client
+python-decouple = "^3.8"   # To easily handle .env
+django-ninja-extra = "*"
+django-ninja-jwt = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pytest-django = "^4.8"
+black = "^24.1"
+isort = "^5.13"
+flake8 = "^7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

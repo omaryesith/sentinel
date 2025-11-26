@@ -1,0 +1,79 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: /start.sh
+    volumes:
+      - ./app:/app # Map the local 'app' folder to the container
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=sentinel
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+
+  redis:
+    image: redis:7-alpine
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+
+    command: celery -A core worker -l info
+
+    volumes:
+      - ./app:/app
+
+    env_file:
+      - .env
+
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
+
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    # The key command that starts the clock
+    command: celery -A core beat -l info
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    image: mher/flower
+    # Remove the complex 'command' and use standard environment variables
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
