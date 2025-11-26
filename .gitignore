@@ -9,7 +9,7 @@ local_settings.py
 db.sqlite3
 media
 
-#Variables de entorno (CRÍTICO: NO SUBIR)
+#Environment variables (CRITICAL: DO NOT UPLOAD)
 .env
 
 #Docker

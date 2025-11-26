@@ -1,22 +1,22 @@
 from django.contrib import admin
 from django.urls import path
 
-# Importamos tus routers
+# Import your routers
 from domains.api import domains_router
 from monitoring.api import monitoring_router
 from ninja_extra import NinjaExtraAPI
 from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import NinjaJWTDefaultController
 
-# 1. Usamos NinjaExtraAPI para tener soporte de Controladores avanzados
+# 1. Use NinjaExtraAPI to have support for advanced Controllers
 api = NinjaExtraAPI(title="Sentinel Monitoring API", version="1.0.0")
 
-# 2. Registramos el controlador de Auth por defecto
-# Esto crea automáticamente rutas como /api/token/pair (Login) y /api/token/refresh
+# 2. Register the default Auth controller
+# This automatically creates routes like /api/token/pair (Login) and /api/token/refresh
 api.register_controllers(NinjaJWTDefaultController)
 
-# 3. Protegemos tus routers existentes
-# El argumento auth=JWTAuth() fuerza a que necesites un token para usar estos endpoints
+# 3. Protect your existing routers
+# The auth=JWTAuth() argument forces the need for a token to use these endpoints
 api.add_router("/domains", domains_router, auth=JWTAuth())
 api.add_router("/monitoring", monitoring_router, auth=JWTAuth())
 

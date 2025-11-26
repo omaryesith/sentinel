@@ -1,0 +1,46 @@
+.PHONY: setup up down build shell test migrate makemigrations logs
+
+# Colors to make it look nice in the terminal
+GREEN=\033[0;32m
+NC=\033[0m # No Color
+
+help:
+	@echo "Available commands for Sentinel:"
+	@echo "${GREEN}make setup${NC}   - Build and initialize everything from scratch"
+	@echo "${GREEN}make up${NC}      - Start servers (background)"
+	@echo "${GREEN}make logs${NC}    - Show logs in real-time"
+	@echo "${GREEN}make test${NC}    - Run test suite (pytest)"
+	@echo "${GREEN}make shell${NC}   - Open a Python terminal inside the container"
+
+setup: build up migrate
+	@echo "${GREEN}Creating Superuser 'admin'...${NC}"
+	docker compose run --rm web python manage.py createsuperuser --username admin --email admin@example.com || true
+
+build:
+	docker compose build
+
+up:
+	docker compose up -d
+
+down:
+	docker compose down
+
+logs:
+	docker compose logs -f
+
+test:
+	docker compose run --rm web pytest
+
+shell:
+	docker compose run --rm web python manage.py shell
+
+migrate:
+	docker compose run --rm web python manage.py migrate
+
+makemigrations:
+	docker compose run --rm web python manage.py makemigrations
+
+# Useful command to clean pycache files and orphan volumes
+clean:
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	docker compose down -v

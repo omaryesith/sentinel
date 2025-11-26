@@ -4,8 +4,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Aplicar migraciones automáticamente al arrancar (Práctica común en Dev, cuidado en Prod)
+# Apply migrations automatically on startup (Common practice in Dev, be careful in Prod)
 python manage.py migrate
 
-# Arrancar servidor de desarrollo escuchando en todas las interfaces
+# Start development server listening on all interfaces
 python manage.py runserver 0.0.0.0:8000

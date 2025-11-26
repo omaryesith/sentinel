@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Si algún comando falla, el script falla
+# If any command fails, the script fails
 set -o errexit
-# Si usamos una variable no declarada, falla
+# If we use an undeclared variable, it fails
 set -o nounset
 
 postgres_ready() {
