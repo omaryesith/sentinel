@@ -15,6 +15,11 @@ media
 #Docker
 .docker_data/
 
+#Celery
+app/celerybeat-schedule
+app/celerybeat-schedule.*
+app/celerybeat.pid
+
 #IDEs
 .idea/
 .vscode/
