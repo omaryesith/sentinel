@@ -6,11 +6,16 @@ NC=\033[0m # No Color
 
 help:
 	@echo "Available commands for Sentinel:"
-	@echo "${GREEN}make setup${NC}   - Build and initialize everything from scratch"
-	@echo "${GREEN}make up${NC}      - Start servers (background)"
-	@echo "${GREEN}make logs${NC}    - Show logs in real-time"
-	@echo "${GREEN}make test${NC}    - Run test suite (pytest)"
-	@echo "${GREEN}make shell${NC}   - Open a Python terminal inside the container"
+	@echo "${GREEN}make setup${NC}          - Build and initialize everything from scratch"
+	@echo "${GREEN}make build${NC}          - Build Docker containers"
+	@echo "${GREEN}make up${NC}             - Start services in background"
+	@echo "${GREEN}make down${NC}           - Stop all services"
+	@echo "${GREEN}make logs${NC}           - Show logs in real-time"
+	@echo "${GREEN}make test${NC}           - Run test suite (pytest)"
+	@echo "${GREEN}make shell${NC}          - Open Django shell inside the container"
+	@echo "${GREEN}make migrate${NC}        - Run database migrations"
+	@echo "${GREEN}make makemigrations${NC} - Create new migrations"
+	@echo "${GREEN}make clean${NC}          - Clean pycache and remove volumes"
 
 setup: build up migrate
 	@echo "${GREEN}Creating Superuser 'admin'...${NC}"
