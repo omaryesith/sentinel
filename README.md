@@ -2,6 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.0-green.svg)](https://www.djangoproject.com/)
+[![CI](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Sentinel is a **distributed synthetic monitoring platform** designed to verify the availability and latency of web services in real-time. Monitor your critical endpoints with automated health checks, track performance metrics, and get instant insights into your service reliability.
@@ -20,6 +21,7 @@ Built with a focus on **Clean Architecture**, **Horizontal Scalability**, and **
 - 🐳 **Fully Dockerized**: Reproducible development and deployment environment
 - 🔍 **Automatic Documentation**: Interactive API docs with Swagger UI
 - 💾 **Persistent Storage**: PostgreSQL for reliable data persistence
+- 🔄 **CI/CD Pipeline**: Automated testing with GitHub Actions
 
 ---
 
@@ -81,22 +83,28 @@ The project is fully dockerized to ensure a reproducible development environment
    # Edit .env with your configuration
    ```
 
-3. **Start the service cluster:**
+3. **Setup the entire project (recommended):**
+
+   This will build containers, start services, run migrations, and create a superuser:
 
    ```bash
-   docker-compose up --build
+   make setup
    ```
 
-4. **Run database migrations:**
+   Or do it step by step:
 
    ```bash
-   docker-compose exec web python manage.py migrate
-   ```
+   # Build containers
+   make build
 
-5. **Create a superuser (optional):**
+   # Start services
+   make up
 
-   ```bash
-   docker-compose exec web python manage.py createsuperuser
+   # Run migrations
+   make migrate
+
+   # Create superuser (optional)
+   docker compose exec web python manage.py createsuperuser
    ```
 
 ### Access the Services
@@ -199,6 +207,9 @@ _Returns the last 50 ping results._
 
 ```
 sentinel/
+├── .github/                  # GitHub configuration
+│   └── workflows/            # CI/CD workflows
+│       └── ci.yml            # Automated testing pipeline
 ├── app/                      # Django application
 │   ├── core/                 # Project settings and configuration
 │   │   ├── settings.py       # Django settings
@@ -219,6 +230,7 @@ sentinel/
 │       ├── Dockerfile        # Django container
 │       └── start.sh          # Startup script
 ├── docker-compose.yml        # Service orchestration
+├── Makefile                  # Development shortcuts
 ├── pyproject.toml            # Python dependencies (Poetry)
 ├── .env.example              # Environment variables template
 └── README.md                 # This file
@@ -251,40 +263,100 @@ REDIS_URL=redis://redis:6379/0
 
 ## 🛠 Development
 
+### Available Make Commands
+
+The project includes a Makefile with convenient shortcuts:
+
+```bash
+make help          # Show all available commands
+make setup         # Build and initialize everything from scratch
+make build         # Build Docker containers
+make up            # Start services in background
+make down          # Stop all services
+make logs          # Show real-time logs
+make test          # Run test suite
+make shell         # Open Django shell
+make migrate       # Run database migrations
+make makemigrations # Create new migrations
+make clean         # Clean pycache and volumes
+```
+
 ### Running Tests
 
 ```bash
-docker-compose exec web python manage.py test
+# Using Makefile (recommended)
+make test
+
+# Or directly with docker compose
+docker compose run --rm web pytest
 ```
 
 ### Accessing the Django Shell
 
 ```bash
-docker-compose exec web python manage.py shell
+# Using Makefile
+make shell
+
+# Or directly
+docker compose exec web python manage.py shell
 ```
 
 ### Viewing Logs
 
 ```bash
-# All services
-docker-compose logs -f
+# All services (using Makefile)
+make logs
+
+# All services (docker compose)
+docker compose logs -f
 
 # Specific service
-docker-compose logs -f web
-docker-compose logs -f celery_worker
-docker-compose logs -f celery_beat
+docker compose logs -f web
+docker compose logs -f celery_worker
+docker compose logs -f celery_beat
 ```
 
 ### Stopping Services
 
 ```bash
-docker-compose down
+make down
 ```
 
 ### Rebuilding Containers
 
 ```bash
-docker-compose up --build
+make build
+make up
+```
+
+---
+
+## 🔄 Continuous Integration
+
+The project uses **GitHub Actions** for automated testing on every push and pull request to the `main` branch.
+
+### CI Workflow
+
+The CI pipeline automatically:
+
+1. ✅ Checks out the code
+2. 🏗️ Builds all Docker services
+3. 🚀 Starts the service cluster
+4. ⏳ Waits for database initialization
+5. 🧪 Runs the test suite
+6. 🧹 Tears down the environment
+
+View the workflow configuration at [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+### Running CI Locally
+
+You can run the same CI steps locally:
+
+```bash
+make build
+make up
+make test
+make down
 ```
 
 ---
