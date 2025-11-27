@@ -5,7 +5,6 @@ import httpx
 from celery import shared_task
 from django.utils import timezone
 
-# Import models to save the result
 from domains.models import Domain
 
 from monitoring.models import PingResult
@@ -27,19 +26,15 @@ def ping_url_task(self, url: str, domain_id: int):
     is_success = False
 
     try:
-        # Make the actual request with a 10s timeout
-        # follow_redirects=True is important to get the real final status
         response = httpx.get(url, timeout=10, follow_redirects=True)
         status_code = response.status_code
 
-        # Consider success if it's 2xx or 3xx
         if 200 <= status_code < 400:
             is_success = True
         else:
             error_msg = f"HTTP Error: {status_code}"
 
     except httpx.RequestError as e:
-        # Capture network errors (DNS, Timeout, Connection Refused)
         error_msg = str(e)
         status_code = 0  # 0 indicates network/connection failure
         is_success = False
@@ -50,10 +45,8 @@ def ping_url_task(self, url: str, domain_id: int):
 
     # --- PERSISTENCE ---
     try:
-        # Find the domain (it could have been deleted while the task was in the queue)
         domain = Domain.objects.get(id=domain_id)
-
-        # Save to the PingResult table
+        
         PingResult.objects.create(
             domain=domain,
             latency_ms=round(latency_ms, 2),
@@ -78,12 +71,10 @@ def check_all_domains_task():
     # Import inside the function to avoid circular references
     from domains.models import Domain
 
-    # Find only active domains
     active_domains = Domain.objects.filter(is_active=True)
     count = 0
 
     for domain in active_domains:
-        # Dispatch the individual asynchronous task for each domain
         ping_url_task.delay(url=domain.url, domain_id=domain.id)
         count += 1
 

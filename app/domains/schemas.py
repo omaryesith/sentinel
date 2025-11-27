@@ -9,7 +9,6 @@ class DomainIn(Schema):
     url: str
     is_active: bool = True
 
-
 class DomainOut(Schema):
     id: int
     name: str

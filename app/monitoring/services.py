@@ -14,8 +14,7 @@ def trigger_manual_check(domain_id: int) -> dict:
     """
     domain = get_object_or_404(Domain, id=domain_id)
 
-    # Call the task using .delay() -> This sends the message to Redis
-    # We don't wait for the response here.
+    domain = get_object_or_404(Domain, id=domain_id)
     task = ping_url_task.delay(url=domain.url, domain_id=domain.id)
 
     return {
