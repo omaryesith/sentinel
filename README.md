@@ -390,11 +390,7 @@ make down
 6. **Monitoring**: Set up application monitoring (Sentry, DataDog, etc.)
 7. **Scaling**: Scale Celery workers horizontally based on load
 
-### Docker Production Build
 
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
 
 ---
 
