@@ -5,6 +5,11 @@
 [![CI](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> [!NOTE]
+> **Portfolio Demonstration Project**
+>
+> This is a demonstration project showcasing modern web development practices, real-time communication patterns, and full-stack Python architecture. It is part of my professional portfolio to demonstrate technical skills in Django, WebSockets, event-driven design, and containerized deployment.
+
 Sentinel is a **distributed synthetic monitoring platform** designed to verify the availability and latency of web services in real-time. Monitor your critical endpoints with automated health checks, track performance metrics, and get instant insights into your service reliability.
 
 Built with a focus on **Clean Architecture**, **Horizontal Scalability**, and **Observability**.
