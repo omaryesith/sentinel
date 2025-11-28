@@ -139,7 +139,7 @@ cd sentinel
 2️⃣ **Configure environment:**
 
 ```bash
-cp app/.env.example app/.env
+cp .env.example .env
 # The .env file contains safe defaults for local development
 # Modify if needed for your environment
 ```
@@ -188,7 +188,8 @@ make setup           # Complete setup: build, migrate, create superuser
 make build           # Build Docker images
 
 # Running Services
-make up              # Start all services in background
+make up-dev          # Start all services in foreground (dev mode)
+make up              # Start all services in background (detached mode)
 make down            # Stop all services
 make logs            # View real-time logs from all services
 
@@ -306,7 +307,6 @@ sentinel/
 │   └── workflows/             # CI/CD workflows
 │       └── ci.yml             # Automated testing pipeline
 ├── app/                       # Django application source
-│   ├── .env.example           # Environment variables template
 │   ├── core/                  # Project configuration
 │   │   ├── settings.py        # Django settings
 │   │   ├── celery.py          # Celery configuration
@@ -339,7 +339,7 @@ sentinel/
 
 ### Environment Variables
 
-Create a `.env` file in the `app/` directory from `.env.example` and customize as needed:
+Create a `.env` file in the root directory from `.env.example` and customize as needed:
 
 | Variable | Description | Default | Production Notes |
 |----------|-------------|---------|------------------|

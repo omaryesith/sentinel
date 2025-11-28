@@ -19,11 +19,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=sentinel
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
 
   redis:
     image: redis:7-alpine
@@ -68,8 +68,8 @@ services:
     image: mher/flower
     # Remove the complex 'command' and use standard environment variables
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - FLOWER_PORT=5555
+      - CELERY_BROKER_URL=${REDIS_URL}
+      - FLOWER_PORT=${FLOWER_PORT}
     ports:
       - "5555:5555"
     depends_on:

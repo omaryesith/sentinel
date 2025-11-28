@@ -24,6 +24,9 @@ setup: build up migrate
 build:
 	docker compose build
 
+up-dev:
+	docker compose up
+
 up:
 	docker compose up -d
 
