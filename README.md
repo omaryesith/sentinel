@@ -1,142 +1,241 @@
-# Sentinel - Distributed Synthetic Monitoring System
+<div align="center">
 
+# 🔍 Sentinel
+
+### Distributed Synthetic Monitoring System
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.0-green.svg)](https://www.djangoproject.com/)
-[![CI](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![CI](https://img.shields.io/badge/CI-Passing-success.svg)](https://github.com/omaryesith/sentinel/actions/workflows/ci.yml)
+
+*A distributed synthetic monitoring platform designed to verify availability and latency of web services in real-time with automated health checks and performance tracking.*
 
 > [!NOTE]
-> **Portfolio Demonstration Project**
->
-> This is a demonstration project showcasing modern web development practices, real-time communication patterns, and full-stack Python architecture. It is part of my professional portfolio to demonstrate technical skills in Django, WebSockets, event-driven design, and containerized deployment.
+> **Portfolio Demonstration Project**  
+> This is a demonstration project showcasing modern web development practices, distributed systems architecture, and full-stack Python development. It is part of my professional portfolio to demonstrate technical skills in Django, Celery, asynchronous task processing, and containerized deployment.
 
-Sentinel is a **distributed synthetic monitoring platform** designed to verify the availability and latency of web services in real-time. Monitor your critical endpoints with automated health checks, track performance metrics, and get instant insights into your service reliability.
+[Features](#-features) •
+[Architecture](#-architecture) •
+[Quick Start](#-quick-start) •
+[API Documentation](#-api-documentation) •
+[Contributing](#-contributing)
 
-Built with a focus on **Clean Architecture**, **Horizontal Scalability**, and **Observability**.
+</div>
 
 ---
 
-## ✨ Features
+## 📖 Overview
 
-- 🔄 **Automated Monitoring**: Scheduled health checks every minute via Celery Beat
-- ⚡ **Asynchronous Processing**: Non-blocking HTTP requests using Celery workers
-- 📊 **Performance Tracking**: Store and query latency metrics over time
-- 🎯 **RESTful API**: Clean, schema-driven API with Django Ninja
-- 📈 **Real-time Observability**: Monitor task queues with Flower dashboard
-- 🐳 **Fully Dockerized**: Reproducible development and deployment environment
-- 🔍 **Automatic Documentation**: Interactive API docs with Swagger UI
-- 💾 **Persistent Storage**: PostgreSQL for reliable data persistence
-- 🔄 **CI/CD Pipeline**: Automated testing with GitHub Actions
+**Sentinel** is a cutting-edge distributed synthetic monitoring platform that enables real-time verification of web service availability and performance. Built with a **microservices architecture** and powered by asynchronous task processing, Sentinel delivers automated health checks, latency tracking, and comprehensive observability without manual intervention.
+
+### ✨ Features
+
+- 🔄 **Automated Monitoring** - Scheduled health checks every minute via Celery Beat
+- ⚡ **Asynchronous Processing** - Non-blocking HTTP requests using Celery workers
+- 📊 **Performance Tracking** - Store and query latency metrics over time
+- 🎯 **RESTful API** - Clean, schema-driven REST API powered by Django Ninja
+- 📈 **Real-time Observability** - Monitor task queues with Flower dashboard
+- 🐳 **Docker-First** - Fully containerized with Docker Compose orchestration
+- 🔍 **Automatic Documentation** - Interactive Swagger/OpenAPI documentation
+- 💾 **Persistent Storage** - PostgreSQL for reliable data persistence
+- 🔄 **CI/CD Pipeline** - Automated testing with GitHub Actions
+- 🔧 **Developer Friendly** - Comprehensive Makefile commands and clear documentation
 
 ---
 
 ## 🏗 Architecture
 
-The system follows a **microservices pattern** orchestrated via Docker:
+### Tech Stack
 
+<div align="center">
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Backend** | Python 3.11 + Django 5 | Core application logic |
+| **API** | Django Ninja | Schema-driven REST API framework |
+| **Task Queue** | Celery 5.3 | Asynchronous background jobs |
+| **Scheduler** | Celery Beat | Cronjob orchestration (health checks) |
+| **Message Broker** | Redis 7 | Task queue and result backend |
+| **Database** | PostgreSQL 15 | Primary data persistence |
+| **HTTP Client** | HTTPX | Async-ready HTTP requests |
+| **Monitoring** | Flower | Worker and queue monitoring |
+| **Dependencies** | Poetry | Python package management |
+| **Container** | Docker + Docker Compose | Service orchestration |
+
+</div>
+
+### System Architecture
+
+```mermaid
+graph TB
+    Client[Web Client]
+    API[REST API<br/>Django Ninja]
+    DB[(PostgreSQL<br/>Database)]
+    Redis[(Redis<br/>Message Broker)]
+    Worker[Celery Workers<br/>Health Checks]
+    Beat[Celery Beat<br/>Scheduler]
+    Flower[Flower<br/>Monitoring]
+    
+    Client -->|HTTP/REST| API
+    API --> DB
+    API -->|Dispatch Task| Redis
+    Redis --> Worker
+    Beat -->|Schedule| Redis
+    Worker -->|HTTP Ping| External[External Services]
+    Worker --> DB
+    Flower -->|Monitor| Redis
+    
+    style Client fill:#e1f5ff
+    style API fill:#fff4e6
+    style DB fill:#e8f5e9
+    style Redis fill:#ffebee
+    style Worker fill:#f3e5f5
+    style Beat fill:#fff9c4
+    style Flower fill:#e0f2f1
 ```
-┌─────────────┐      ┌──────────────┐      ┌─────────────┐
-│   Client    │─────▶│  Django API  │─────▶│ PostgreSQL  │
-└─────────────┘      └──────────────┘      └─────────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │    Redis     │
-                     │   (Broker)   │
-                     └──────────────┘
-                            │
-                ┌───────────┴───────────┐
-                ▼                       ▼
-         ┌─────────────┐         ┌─────────────┐
-         │Celery Worker│         │ Celery Beat │
-         │   (Tasks)   │         │ (Scheduler) │
-         └─────────────┘         └─────────────┘
-```
 
-### Components
+### Data Flow
 
-- **API Gateway & Management**: Python 3.11 + Django 5 + Django Ninja (Schema-driven development)
-- **Asynchronous Workers**: Celery Workers for non-blocking execution of I/O tasks (HTTP Pings)
-- **Scheduling**: Celery Beat for cronjob orchestration (automatic monitoring every minute)
-- **Persistence**: PostgreSQL 15 (Relational data) and Redis 7 (Message broker & Result backend)
-- **Observability**: Flower for queue monitoring and worker throughput
+**Automated Monitoring Flow:**
+Sentinel implements a distributed task queue pattern where Celery Beat schedules periodic health checks that are executed asynchronously by worker nodes.
+
+**Example Flow:**
+1. Celery Beat triggers scheduled task every minute
+2. Task is dispatched to Redis queue
+3. Available Celery worker picks up task from queue
+4. Worker performs HTTP request to monitored endpoint
+5. Worker records latency, status code, and timestamp to PostgreSQL
+6. Results are available via REST API for querying
+
+**Manual Check Flow:**
+1. Client triggers manual check via REST API (`POST /api/monitoring/{id}/check`)
+2. API dispatches task to Redis queue asynchronously
+3. Worker processes health check and stores result
+4. Client can query results via history endpoint
 
 ---
 
 ## 🚀 Quick Start
 
-The project is fully dockerized to ensure a reproducible development environment.
-
 ### Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) (v20.10+)
-- [Docker Compose](https://docs.docker.com/compose/install/) (v2.0+)
+Ensure you have the following installed:
+
+- **Docker** (v20.10+) & **Docker Compose** (v2.0+)
+- **Make** (optional, for convenience commands)
+- **Git**
 
 ### Installation
 
-1. **Clone the repository:**
+1️⃣ **Clone the repository:**
 
-   ```bash
-   git clone https://github.com/omaryesith/sentinel.git
-   cd sentinel
-   ```
+```bash
+git clone https://github.com/omaryesith/sentinel.git
+cd sentinel
+```
 
-2. **Configure environment variables:**
+2️⃣ **Configure environment:**
 
-   ```bash
-   cp app/.env.example app/.env
-   # Edit app/.env with your configuration
-   ```
+```bash
+cp app/.env.example app/.env
+# The .env file contains safe defaults for local development
+# Modify if needed for your environment
+```
 
-3. **Setup the entire project (recommended):**
+3️⃣ **Start the application:**
 
-   This will build containers, start services, run migrations, and create a superuser:
+**Option A: Using Make (Recommended)**
+```bash
+make setup
+# This will: build images, run migrations, and create a superuser
+```
 
-   ```bash
-   make setup
-   ```
+**Option B: Using Docker Compose directly**
+```bash
+docker compose up --build -d
+docker compose run --rm web python manage.py migrate
+docker compose run --rm web python manage.py createsuperuser
+```
 
-   Or do it step by step:
+4️⃣ **Access the services:**
 
-   ```bash
-   # Build containers
-   make build
+| Service | URL | Description |
+|---------|-----|-------------|
+| 📚 **API Docs (Swagger)** | http://localhost:8000/api/docs | Interactive API documentation |
+| 🔐 **Admin Panel** | http://localhost:8000/admin | Django admin interface |
+| 📊 **Flower Dashboard** | http://localhost:5555 | Celery worker monitoring |
 
-   # Start services
-   make up
+### Default Setup
 
-   # Run migrations
-   make migrate
-
-   # Create superuser (optional)
-   docker compose exec web python manage.py createsuperuser
-   ```
-
-### Access the Services
-
-- **API & Documentation (Swagger)**: http://localhost:8000/api/docs
-- **Django Admin Panel**: http://localhost:8000/admin
-- **Worker Monitor (Flower)**: http://localhost:5555
+After running `make setup`, the system will:
+- Build all Docker containers
+- Initialize PostgreSQL database
+- Run Django migrations
+- Prompt for superuser creation
+- Start all services (API, Workers, Beat, Flower)
 
 ---
 
-## 🧪 API Usage
+## 🛠 Development Commands
 
-### 1. Register a Domain
-
-Register a new domain/endpoint to monitor:
+The project includes a comprehensive `Makefile` for common operations:
 
 ```bash
-POST /api/domains/
+# Setup & Build
+make setup           # Complete setup: build, migrate, create superuser
+make build           # Build Docker images
+
+# Running Services
+make up              # Start all services in background
+make down            # Stop all services
+make logs            # View real-time logs from all services
+
+# Development
+make shell           # Open Django shell
+make migrate         # Run pending migrations
+make makemigrations  # Create new migrations
+
+# Testing & QA
+make test            # Run pytest test suite
+
+# Maintenance
+make clean           # Remove __pycache__ and volumes
+make help            # Show all available commands
 ```
 
-**Request Body:**
-```json
-{
-  "name": "Production API",
-  "url": "https://api.example.com",
-  "is_active": true
-}
+---
+
+## 📡 API Documentation
+
+### Core Endpoints
+
+#### Domains
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/domains/` | Register new domain to monitor |
+| `GET` | `/api/domains/` | List all registered domains |
+| `GET` | `/api/domains/{id}` | Get domain details |
+
+#### Monitoring
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/monitoring/{id}/check` | Trigger manual health check |
+| `GET` | `/api/monitoring/{id}/history` | Get latency history (last 50 checks) |
+
+### Example: Register a Domain
+
+```bash
+curl -X POST http://localhost:8000/api/domains/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Production API",
+    "url": "https://api.example.com",
+    "is_active": true
+  }'
 ```
 
 **Response:**
@@ -150,24 +249,10 @@ POST /api/domains/
 }
 ```
 
-### 2. List All Domains
+### Example: Trigger Manual Check
 
 ```bash
-GET /api/domains/
-```
-
-### 3. Get Domain Details
-
-```bash
-GET /api/domains/{id}
-```
-
-### 4. Trigger Manual Check
-
-Manually trigger a health check for a specific domain:
-
-```bash
-POST /api/monitoring/{id}/check
+curl -X POST http://localhost:8000/api/monitoring/1/check
 ```
 
 **Response:**
@@ -179,14 +264,10 @@ POST /api/monitoring/{id}/check
 }
 ```
 
-_Dispatches an asynchronous task to the Redis queue._
-
-### 5. View Latency History
-
-Query the performance history for a domain:
+### Example: View Performance History
 
 ```bash
-GET /api/monitoring/{id}/history
+curl http://localhost:8000/api/monitoring/1/history
 ```
 
 **Response:**
@@ -200,11 +281,20 @@ GET /api/monitoring/{id}/history
     "status_code": 200,
     "is_success": true,
     "error_message": null
+  },
+  {
+    "id": 2,
+    "domain_id": 1,
+    "checked_at": "2025-11-26T01:01:00Z",
+    "latency_ms": 231.45,
+    "status_code": 200,
+    "is_success": true,
+    "error_message": null
   }
 ]
 ```
 
-_Returns the last 50 ping results._
+For full API documentation, visit the **Swagger UI** at http://localhost:8000/api/docs after starting the server.
 
 ---
 
@@ -212,138 +302,82 @@ _Returns the last 50 ping results._
 
 ```
 sentinel/
-├── .github/                  # GitHub configuration
-│   └── workflows/            # CI/CD workflows
-│       └── ci.yml            # Automated testing pipeline
-├── app/                      # Django application
-│   ├── .env.example          # Environment variables template
-│   ├── core/                 # Project settings and configuration
-│   │   ├── settings.py       # Django settings
-│   │   ├── celery.py         # Celery configuration
-│   │   └── urls.py           # URL routing
-│   ├── domains/              # Domain management app
-│   │   ├── models.py         # Domain model
-│   │   ├── api.py            # Domain API endpoints
-│   │   └── schemas.py        # Pydantic schemas
-│   └── monitoring/           # Monitoring app
-│       ├── models.py         # PingResult model
-│       ├── api.py            # Monitoring API endpoints
-│       ├── tasks.py          # Celery tasks
-│       ├── services.py       # Business logic
-│       └── schemas.py        # Pydantic schemas
-├── docker/                   # Docker configuration
+├── .github/                   # GitHub configuration
+│   └── workflows/             # CI/CD workflows
+│       └── ci.yml             # Automated testing pipeline
+├── app/                       # Django application source
+│   ├── .env.example           # Environment variables template
+│   ├── core/                  # Project configuration
+│   │   ├── settings.py        # Django settings
+│   │   ├── celery.py          # Celery configuration
+│   │   └── urls.py            # URL routing
+│   ├── domains/               # Domain management app
+│   │   ├── models.py          # Domain model
+│   │   ├── api.py             # REST API endpoints
+│   │   ├── schemas.py         # Pydantic validation schemas
+│   │   └── admin.py           # Django admin config
+│   └── monitoring/            # Monitoring app
+│       ├── models.py          # PingResult model
+│       ├── api.py             # REST API endpoints
+│       ├── tasks.py           # Celery tasks (health checks)
+│       ├── services.py        # Business logic
+│       └── schemas.py         # Pydantic validation schemas
+├── docker/                    # Docker configuration
 │   └── django/
-│       ├── Dockerfile        # Django container
-│       └── start.sh          # Startup script
-├── docker-compose.yml        # Service orchestration
-├── Makefile                  # Development shortcuts
-├── pyproject.toml            # Python dependencies (Poetry)
-└── README.md                 # This file
+│       ├── Dockerfile         # Python app container
+│       └── start.sh           # Startup script
+├── .env.example               # Environment variables template
+├── docker-compose.yml         # Service orchestration
+├── pyproject.toml             # Poetry dependencies
+├── Makefile                   # Development commands
+└── README.md                  # This file
 ```
 
 ---
 
-## 🔧 Environment Variables
+## 🔧 Configuration
 
-Create a `.env` file in the `app/` directory with the following variables:
+### Environment Variables
 
-```bash
-# Django Settings
-SECRET_KEY=your-secret-key-here
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+Create a `.env` file in the `app/` directory from `.env.example` and customize as needed:
 
-# Database Configuration
-POSTGRES_DB=sentinel
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
+| Variable | Description | Default | Production Notes |
+|----------|-------------|---------|------------------|
+| `SECRET_KEY` | Django secret key | `insecure-dev-key` | ⚠️ **Must change** |
+| `DEBUG` | Debug mode | `True` | ⚠️ Set to `False` |
+| `ALLOWED_HOSTS` | Allowed hostnames | `localhost,127.0.0.1` | Add your domain |
+| `POSTGRES_DB` | Database name | `sentinel` | - |
+| `POSTGRES_USER` | Database user | `postgres` | ⚠️ Use strong credentials |
+| `POSTGRES_PASSWORD` | Database password | `postgres` | ⚠️ Use strong credentials |
+| `POSTGRES_HOST` | Database host | `db` | - |
+| `POSTGRES_PORT` | Database port | `5432` | - |
+| `REDIS_URL` | Redis connection URL | `redis://redis:6379/0` | - |
 
-# Redis Configuration
-REDIS_URL=redis://redis:6379/0
-```
+> [!CAUTION]
+> **Never commit `.env` to version control!** The `.env.example` file contains safe defaults for development only. Always generate strong, unique credentials for production deployments.
 
 ---
 
-## 🛠 Development
+## 🧪 Testing
 
-### Available Make Commands
-
-The project includes a Makefile with convenient shortcuts:
+Run the test suite using pytest:
 
 ```bash
-make help          # Show all available commands
-make setup         # Build and initialize everything from scratch
-make build         # Build Docker containers
-make up            # Start services in background
-make down          # Stop all services
-make logs          # Show real-time logs
-make test          # Run test suite
-make shell         # Open Django shell
-make migrate       # Run database migrations
-make makemigrations # Create new migrations
-make clean         # Clean pycache and volumes
-```
-
-### Running Tests
-
-```bash
-# Using Makefile (recommended)
+# Using Make
 make test
 
-# Or directly with docker compose
+# Using Docker Compose
 docker compose run --rm web pytest
+
+# Run with coverage
+docker compose run --rm web pytest --cov=app --cov-report=html
 ```
 
-### Accessing the Django Shell
-
-```bash
-# Using Makefile
-make shell
-
-# Or directly
-docker compose exec web python manage.py shell
-```
-
-### Viewing Logs
-
-```bash
-# All services (using Makefile)
-make logs
-
-# All services (docker compose)
-docker compose logs -f
-
-# Specific service
-docker compose logs -f web
-docker compose logs -f celery_worker
-docker compose logs -f celery_beat
-```
-
-### Stopping Services
-
-```bash
-make down
-```
-
-### Rebuilding Containers
-
-```bash
-make build
-make up
-```
-
----
-
-## 🔄 Continuous Integration
+### Continuous Integration
 
 The project uses **GitHub Actions** for automated testing on every push and pull request to the `main` branch.
 
-### CI Workflow
-
 The CI pipeline automatically:
-
 1. ✅ Checks out the code
 2. 🏗️ Builds all Docker services
 3. 🚀 Starts the service cluster
@@ -353,37 +387,79 @@ The CI pipeline automatically:
 
 View the workflow configuration at [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
-### Running CI Locally
+---
 
-You can run the same CI steps locally:
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+If port 8000 is already occupied:
+```bash
+# Find process using port 8000
+sudo lsof -i :8000
+
+# Kill the process or change port in docker-compose.yml
+```
+
+### Database Connection Issues
 
 ```bash
-make build
-make up
-make test
-make down
+# Check if PostgreSQL is running
+docker compose ps
+
+# View database logs
+docker compose logs db
+
+# Restart database
+docker compose restart db
+```
+
+### Redis Connection Issues
+
+```bash
+# Check Redis status
+docker compose exec redis redis-cli ping
+# Should respond: PONG
+
+# View Redis logs
+docker compose logs redis
+```
+
+### Celery Worker Not Processing Tasks
+
+```bash
+# Check worker status
+docker compose logs celery_worker
+
+# Check Flower dashboard
+# Visit http://localhost:5555
+
+# Restart workers
+docker compose restart celery_worker celery_beat
+```
+
+### Migration Errors
+
+```bash
+# Reset database (⚠️ destroys data)
+docker compose down -v
+docker compose up -d db
+docker compose run --rm web python manage.py migrate
 ```
 
 ---
 
-## ⚙️ Technology Stack
+## 📝 Development Notes
 
-| Category | Technology |
-|----------|-----------|
-| **Backend** | Python 3.11, Django 5.0 |
-| **API Framework** | Django Ninja (Pydantic v2) |
-| **Task Queue** | Celery 5.3 |
-| **Scheduler** | Celery Beat |
-| **Database** | PostgreSQL 15 (Driver: Psycopg 3) |
-| **Broker** | Redis 7 |
-| **HTTP Client** | HTTPX (Async ready) |
-| **Monitoring** | Flower |
-| **Containerization** | Docker Multi-stage builds |
-| **Dependency Management** | Poetry |
+- **Poetry** manages Python dependencies (see `pyproject.toml`)
+- **HTTPX** is used for async HTTP requests in Celery tasks
+- **Redis** serves dual purpose: Celery broker + result backend
+- **Migrations** are tracked in Git and should be committed
+- **Celery Beat** requires persistent storage for schedule (uses database scheduler)
 
 ---
 
-## � Deployment
+## 🚢 Deployment
 
 ### Production Considerations
 
@@ -394,35 +470,55 @@ make down
 5. **HTTPS**: Use a reverse proxy (Nginx) with SSL certificates
 6. **Monitoring**: Set up application monitoring (Sentry, DataDog, etc.)
 7. **Scaling**: Scale Celery workers horizontally based on load
-
-
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## �👨‍💻 Author
-
-**Omar Alvarado**  
-Senior Backend Engineer  
-📧 [omarjesith@gmail.com](mailto:omarjesith@gmail.com)  
-🔗 [GitHub](https://github.com/omaryesith)
+8. **Health Checks**: Implement health check endpoints for load balancers
+9. **Logging**: Configure centralized logging (ELK stack, CloudWatch, etc.)
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/omaryesith/sentinel/issues).
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Style
+
+This project uses:
+- **Black** for code formatting
+- **isort** for import sorting
+- **pytest** for testing
+
+Run formatters before committing:
+```bash
+docker compose run --rm web black app/
+docker compose run --rm web isort app/
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
 - Built with [Django](https://www.djangoproject.com/)
-- API powered by [Django Ninja](https://django-ninja.rest-framework.com/)
-- Task processing by [Celery](https://docs.celeryq.dev/)
-- Inspired by modern observability platforms
+- API framework: [Django Ninja](https://django-ninja.rest-framework.com/)
+- Task processing: [Celery](https://docs.celeryq.dev/)
+- HTTP client: [HTTPX](https://www.python-httpx.org/)
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [Omar Alvarado](https://github.com/omaryesith)**
+
+⭐ Star this repo if you find it useful!
+
+</div>
