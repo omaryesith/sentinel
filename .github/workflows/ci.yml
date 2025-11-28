@@ -30,7 +30,8 @@ jobs:
           echo "POSTGRES_HOST=db" >> .env
           echo "POSTGRES_PORT=5432" >> .env
           echo "REDIS_URL=redis://redis:6379/0" >> .env
-          ln -s .env ./app/.env
+          echo "FLOWER_PORT=5555" >> .env
+          ln -s ../.env app/.env
 
       - name: Start Database and Redis only
         run: docker compose up -d db redis

@@ -140,8 +140,9 @@ cd sentinel
 
 ```bash
 cp .env.example .env
-# The .env file contains safe defaults for local development
-# Modify if needed for your environment
+ln -s ../.env app/.env
+# The .env file is in root (for Docker) with a symlink in app/ (for Django)
+# Modify .env if needed for your environment
 ```
 
 3️⃣ **Start the application:**
@@ -339,7 +340,7 @@ sentinel/
 
 ### Environment Variables
 
-Create a `.env` file in the root directory from `.env.example` and customize as needed:
+The `.env` file should be in the root directory (for Docker Compose) with a symlink at `app/.env` (for Django's python-decouple). Use the setup instructions above to configure this correctly.
 
 | Variable | Description | Default | Production Notes |
 |----------|-------------|---------|------------------|
