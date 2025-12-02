@@ -14,7 +14,7 @@
 
 > [!NOTE]
 > **Portfolio Demonstration Project**  
-> This is a demonstration project showcasing modern web development practices, distributed systems architecture, and full-stack Python development. It is part of my professional portfolio to demonstrate technical skills in Django, Celery, asynchronous task processing, and containerized deployment.
+> This is a demonstration project showcasing a **Distributed Synthetic Monitoring System**, emphasizing microservices patterns and asynchronous task orchestration. It is part of my professional portfolio to demonstrate technical skills in Django, Celery, periodic task scheduling with Beat, distributed queue management with Redis, and containerized deployment.
 
 [Features](#-features) •
 [Architecture](#-architecture) •
