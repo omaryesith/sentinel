@@ -14,7 +14,7 @@
 
 > [!NOTE]
 > **Portfolio Demonstration Project**  
-> This is a demonstration project showcasing a **Distributed Synthetic Monitoring System**, emphasizing microservices patterns and asynchronous task orchestration. It is part of my professional portfolio to demonstrate technical skills in Django, Celery, periodic task scheduling with Beat, distributed queue management with Redis, and containerized deployment.
+> This is a demonstration project showcasing a **Distributed Synthetic Monitoring System**, emphasizing distributed system patterns and asynchronous task orchestration. It is part of my professional portfolio to demonstrate technical skills in Django, Celery, periodic task scheduling with Beat, distributed queue management with Redis, and containerized deployment.
 
 [Features](#-features) •
 [Architecture](#-architecture) •
@@ -28,7 +28,7 @@
 
 ## 📖 Overview
 
-**Sentinel** is a cutting-edge distributed synthetic monitoring platform that enables real-time verification of web service availability and performance. Built with a **microservices architecture** and powered by asynchronous task processing, Sentinel delivers automated health checks, latency tracking, and comprehensive observability without manual intervention.
+**Sentinel** is a cutting-edge distributed synthetic monitoring platform that enables real-time verification of web service availability and performance. Built with a **distributed architecture** and powered by asynchronous task processing, Sentinel delivers automated health checks, latency tracking, and comprehensive observability without manual intervention.
 
 ### ✨ Features
 
