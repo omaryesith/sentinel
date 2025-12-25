@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Página no encontrada | Omar Alvarado</title>
+    <meta
+      name="description"
+      content="Página no encontrada. Portafolio de Omar Alvarado."
+    />
+    <!-- Tailwind CSS (CDN para despliegue inmediato sin build) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .gradient-text {
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-900 text-slate-300 antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen"
+  >
+    <!-- NAV -->
+    <nav
+      class="fixed w-full z-50 bg-slate-900/90 backdrop-blur-sm border-b border-slate-800"
+    >
+      <div
+        class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a href="/" class="text-xl font-bold text-white tracking-tight"
+          >OmarAlvarado<span class="text-indigo-500">.dev</span></a
+        >
+        <div class="flex gap-6 text-sm font-medium">
+          <a href="/#projects" class="hover:text-white transition">Proyectos</a>
+          <a href="/#stack" class="hover:text-white transition">Stack</a>
+          <a href="/#contact" class="hover:text-white transition">Contacto</a>
+          <div class="border-l border-slate-700 pl-6 ml-2 flex gap-3">
+            <span class="text-indigo-500 font-bold">ES</span>
+            <a href="/en/" class="hover:text-white transition">EN</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 404 CONTENT -->
+    <main class="flex-grow flex items-center justify-center pt-32 pb-20 px-6">
+      <div class="max-w-5xl mx-auto text-center">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-900/30 border border-indigo-700/50 text-indigo-300 text-xs font-semibold mb-6"
+        >
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+          <span>Error 404</span>
+        </div>
+
+        <h1
+          class="text-6xl md:text-9xl font-extrabold text-white mb-6 leading-tight"
+        >
+          <span class="gradient-text">404</span>
+        </h1>
+        
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-6">
+            Página no encontrada
+        </h2>
+
+        <p
+          class="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10"
+        >
+          Parece que te has perdido en el ciberespacio. La página que buscas no existe o ha sido movida.
+        </p>
+
+        <div class="flex justify-center flex-wrap gap-4">
+          <a
+            href="/"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-bold transition flex items-center gap-2"
+          >
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            Volver al Inicio
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="py-8 text-center text-slate-500 text-sm border-t border-slate-800"
+    >
+      <p>&copy; 2025 Omar Alvarado. Deployado en Linux.</p>
+    </footer>
+
+    <script>
+      // Inicializar iconos
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
