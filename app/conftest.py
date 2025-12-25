@@ -1,9 +1,11 @@
 import os
+
 import pytest
 from core.urls import api  # Import the Ninja API instance
 from django.contrib.auth.models import User
 from ninja.testing import TestClient
 from ninja_jwt.tokens import RefreshToken
+
 
 @pytest.fixture
 def user(db):

@@ -22,9 +22,7 @@ class PingResult(models.Model):
     class Meta:
         ordering = ["-checked_at"]  # Most recent first
         indexes = [
-            models.Index(
-                fields=["domain", "-checked_at"]
-            ),  # Optimization for charts
+            models.Index(fields=["domain", "-checked_at"]),  # Optimization for charts
         ]
 
     def __str__(self):

@@ -164,9 +164,10 @@ docker compose run --rm web python manage.py createsuperuser
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| 📚 **API Docs (Swagger)** | http://localhost:8000/api/docs | Interactive API documentation |
-| 🔐 **Admin Panel** | http://localhost:8000/admin | Django admin interface |
-| 📊 **Flower Dashboard** | http://localhost:5555 | Celery worker monitoring |
+| 🏠 **Landing Page** | http://localhost/ | Demo portal with links |
+| 📚 **API Docs (Swagger)** | http://localhost/api/docs | Interactive API documentation |
+| 🔐 **Admin Panel** | http://localhost/admin | Django admin interface (dev only) |
+| 📊 **Flower Dashboard** | http://localhost/flower/ | Celery worker monitoring |
 
 ### Default Setup
 
@@ -324,11 +325,21 @@ sentinel/
 │       ├── services.py        # Business logic
 │       └── schemas.py         # Pydantic validation schemas
 ├── docker/                    # Docker configuration
-│   └── django/
-│       ├── Dockerfile         # Python app container
-│       └── start.sh           # Startup script
+│   ├── django/
+│   │   ├── Dockerfile         # Python app container
+│   │   ├── start.sh           # Dev startup script
+│   │   └── start-prod.sh      # Production startup (Gunicorn)
+│   ├── nginx/
+│   │   ├── default.conf       # Dev nginx config
+│   │   ├── nginx.prod.conf    # Production nginx config
+│   │   └── Dockerfile.prod    # Production nginx container
+│   └── frontend/
+│       └── Dockerfile         # Frontend/Landing container
+├── landing/                   # Landing page HTML
+│   └── index.html
 ├── .env.example               # Environment variables template
-├── docker-compose.yml         # Service orchestration
+├── docker-compose.yml         # Development orchestration
+├── docker-compose.prod.yml    # Production orchestration
 ├── pyproject.toml             # Poetry dependencies
 ├── Makefile                   # Development commands
 └── README.md                  # This file
@@ -347,12 +358,18 @@ The `.env` file should be in the root directory (for Docker Compose) with a syml
 | `SECRET_KEY` | Django secret key | `insecure-dev-key` | ⚠️ **Must change** |
 | `DEBUG` | Debug mode | `True` | ⚠️ Set to `False` |
 | `ALLOWED_HOSTS` | Allowed hostnames | `localhost,127.0.0.1` | Add your domain |
+| `CSRF_TRUSTED_ORIGINS` | CSRF trusted origins | - | `https://yourdomain.com` |
 | `POSTGRES_DB` | Database name | `sentinel` | - |
 | `POSTGRES_USER` | Database user | `postgres` | ⚠️ Use strong credentials |
 | `POSTGRES_PASSWORD` | Database password | `postgres` | ⚠️ Use strong credentials |
 | `POSTGRES_HOST` | Database host | `db` | - |
 | `POSTGRES_PORT` | Database port | `5432` | - |
 | `REDIS_URL` | Redis connection URL | `redis://redis:6379/0` | - |
+| `FLOWER_PORT` | Flower dashboard port | `5555` | - |
+| `FLOWER_USER` | Flower auth username | `admin` | ⚠️ Change in production |
+| `FLOWER_PASSWORD` | Flower auth password | - | ⚠️ **Required in production** |
+| `GUNICORN_WORKERS` | Gunicorn worker count | `3` | 2 × CPU cores + 1 |
+| `GUNICORN_TIMEOUT` | Gunicorn request timeout | `120` | Seconds |
 
 > [!CAUTION]
 > **Never commit `.env` to version control!** The `.env.example` file contains safe defaults for development only. Always generate strong, unique credentials for production deployments.
@@ -462,16 +479,48 @@ docker compose run --rm web python manage.py migrate
 
 ## 🚢 Deployment
 
+### Production Deployment (VPS)
+
+The project includes a production-ready Docker Compose configuration using **Gunicorn** as the WSGI server:
+
+```bash
+# 1. Configure environment
+cp .env.example .env
+ln -s ../.env app/.env
+# Edit .env with production values (DEBUG=False, strong SECRET_KEY, etc.)
+
+# 2. Build and deploy
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+
+# 3. Create superuser (first time only)
+docker compose -f docker-compose.prod.yml exec web python manage.py createsuperuser
+
+# 4. View logs
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+### Production Architecture
+
+| Component | Description |
+|-----------|-------------|
+| **Nginx** | Reverse proxy, static files, SSL termination |
+| **Gunicorn** | WSGI server (configurable workers) |
+| **PostgreSQL** | Persistent database with health checks |
+| **Redis** | Message broker with health checks |
+| **Celery** | Background workers + scheduler |
+| **Flower** | Task monitoring dashboard |
+
 ### Production Considerations
 
 1. **Environment Variables**: Set `DEBUG=False` and use a strong `SECRET_KEY`
-2. **Database**: Use managed PostgreSQL service (AWS RDS, Google Cloud SQL, etc.)
-3. **Redis**: Use managed Redis service (AWS ElastiCache, Redis Cloud, etc.)
-4. **Static Files**: Configure static file serving with WhiteNoise or CDN
-5. **HTTPS**: Use a reverse proxy (Nginx) with SSL certificates
+2. **CSRF Origins**: Set `CSRF_TRUSTED_ORIGINS=https://yourdomain.com`
+3. **Database**: Use managed PostgreSQL service (AWS RDS, Google Cloud SQL, etc.)
+4. **Redis**: Use managed Redis service (AWS ElastiCache, Redis Cloud, etc.)
+5. **HTTPS**: Configure SSL certificates with Let's Encrypt + Nginx
 6. **Monitoring**: Set up application monitoring (Sentry, DataDog, etc.)
 7. **Scaling**: Scale Celery workers horizontally based on load
-8. **Health Checks**: Implement health check endpoints for load balancers
+8. **Health Checks**: All services include Docker health checks
 9. **Logging**: Configure centralized logging (ELK stack, CloudWatch, etc.)
 
 ---

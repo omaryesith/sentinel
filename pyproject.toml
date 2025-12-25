@@ -15,6 +15,7 @@ httpx = "^0.27"
 python-decouple = "^3.8"
 django-ninja-extra = "*"
 django-ninja-jwt = "*"
+gunicorn = "^21.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0"

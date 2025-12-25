@@ -4,9 +4,7 @@ import time
 import httpx
 from celery import shared_task
 from django.utils import timezone
-
 from domains.models import Domain
-
 from monitoring.models import PingResult
 
 logger = logging.getLogger(__name__)
@@ -46,7 +44,7 @@ def ping_url_task(self, url: str, domain_id: int):
     # --- PERSISTENCE ---
     try:
         domain = Domain.objects.get(id=domain_id)
-        
+
         PingResult.objects.create(
             domain=domain,
             latency_ms=round(latency_ms, 2),

@@ -1,5 +1,4 @@
 import pytest
-
 from domains.models import Domain
 
 

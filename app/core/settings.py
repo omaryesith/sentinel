@@ -102,5 +102,13 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# CSRF trusted origins for production (configure in .env)
+CSRF_TRUSTED_ORIGINS = (
+    config("CSRF_TRUSTED_ORIGINS", default="").split(",")
+    if config("CSRF_TRUSTED_ORIGINS", default="")
+    else []
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
